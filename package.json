@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+    "start": "ts-node-dev --respawn --transpile-only --exit-child src/server.ts",
+    "build": "tsc . -p"
+ },
   "keywords": [],
   "author": "",
   "license": "ISC",
