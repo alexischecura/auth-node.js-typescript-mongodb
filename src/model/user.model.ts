@@ -7,6 +7,7 @@ import {
   prop,
 } from '@typegoose/typegoose';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto'
 
 @pre<User>('save', async function (next) {
   if (!this.isModified('password')) return;
@@ -63,6 +64,15 @@ export class User {
 
   async validatePassword(candidatePassword: string) {
     return await bcrypt.compare(candidatePassword, this.password);
+  }
+
+  async createVerificationCode() {
+    const verifyCode = crypto.randomBytes(32).toString('hex');
+    this.verificationCode = crypto
+      .createHash('sha256')
+      .update(verifyCode)
+      .digest('hex');
+    return verifyCode;
   }
 }
 
