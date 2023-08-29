@@ -51,6 +51,9 @@ export class User {
   verificationCode: string | null;
 
   @prop({ select: false })
+  verificationCodeExpires: Date | null;
+
+  @prop({ select: false })
   passwordResetCode: string | null;
 
   @prop({ select: false })
@@ -72,6 +75,7 @@ export class User {
       .createHash('sha256')
       .update(verifyCode)
       .digest('hex');
+    this.verificationCodeExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
     return verifyCode;
   }
 }

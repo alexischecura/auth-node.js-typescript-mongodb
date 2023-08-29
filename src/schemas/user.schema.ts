@@ -31,3 +31,7 @@ export const createUserSchema = z
     message: "Passwords don't match",
     path: ['passwordConfirm'],
   });
+
+export const tokenParamsSchema = z.object({
+  token: z.string(),
+});

@@ -1,10 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
 import { DocumentType } from '@typegoose/typegoose';
-import { ConflictError, InternalServerError } from '../utils/AppError';
+import crypto from 'crypto';
+import {
+  AuthenticationError,
+  ConflictError,
+  InternalServerError,
+} from '../utils/AppError';
 
 import Email from '../utils/Email';
 import { User } from '../model/user.model';
-import { createUser } from '../services/user.service';
+import { createUser, updateUser } from '../services/user.service';
 
 export const createUserHandler = async (
   req: Request<{}, {}, DocumentType<User>>,
@@ -47,5 +52,41 @@ export const createUserHandler = async (
         'There was an error creating the account. Please try again later.'
       );
     }
+  }
+};
+
+export const verifyEmailHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // Params type verification done in routes
+
+    const verificationCode = crypto
+      .createHash('sha256')
+      .update(req.params.token)
+      .digest('hex');
+
+    const user = await updateUser(
+      {
+        verificationCode,
+        verificationCodeExpires: { $gt: new Date() },
+      },
+      { verified: true, verificationCode: null, verificationCodeExpires: null }
+    );
+
+    if (!user) {
+      return next(new AuthenticationError('Invalid verification code'));
+    }
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Email verified successfully',
+    });
+  } catch (error) {
+    next(
+      new InternalServerError('Something went wrong when verifying the email')
+    );
   }
 };
