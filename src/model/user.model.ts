@@ -7,19 +7,23 @@ import {
   prop,
 } from '@typegoose/typegoose';
 import bcrypt from 'bcryptjs';
-import crypto from 'crypto'
+import crypto from 'crypto';
 
+export enum UserRole {
+  USER = 'user',
+  ADMIN = 'admin',
+}
+
+@index({ email: 1, verificationCode: 1 })
 @pre<User>('save', async function (next) {
-  if (!this.isModified('password')) return;
+  if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
-  next;
+  next();
 })
-
 @pre<User>(/^find/, function (next) {
   this.find({ active: { $ne: false } });
   next();
 })
-@index({ email: 1, verificationCode: 1 })
 @modelOptions({
   schemaOptions: {
     timestamps: true,
@@ -28,12 +32,6 @@ import crypto from 'crypto'
     allowMixed: Severity.ALLOW,
   },
 })
-
-export enum UserRole {
-  USER= 'user',
-  ADMIN = 'admin'
-}
-
 export class User {
   @prop({ required: true })
   fullName: string;
