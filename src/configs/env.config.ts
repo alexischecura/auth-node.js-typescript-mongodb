@@ -8,6 +8,12 @@ const envSchema = z.object({
   ORIGIN: z.string(),
   RATE_LIMIT_TIME_IN_SECONDS: z.string().regex(numberRegex).transform(Number),
 
+  EMAIL_USER: z.string(),
+  EMAIL_PASS: z.string(),
+  EMAIL_HOST: z.string(),
+  EMAIL_PORT: z.string().regex(numberRegex).transform(Number),
+  EMAIL_FROM: z.string(),
+
   MONGO_VERSION: z.string(),
   MONGO_USER: z.string(),
   MONGO_PASSWORD: z.string(),

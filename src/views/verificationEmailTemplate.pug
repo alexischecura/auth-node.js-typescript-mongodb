@@ -1,0 +1,12 @@
+extends emailTemplate
+
+block content
+  p Hi #{firstName}
+  
+  p It seems that an account has been created using this email address. To ensure the security and accuracy of your registration 
+    please click on the "Verify Email" button below to finalize your account setup
+
+  a(href=`${url}` target='_blank') Verify Email
+
+  p This code will expire in 24 hours for security reasons.
+
