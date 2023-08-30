@@ -23,6 +23,13 @@ export const getUser = async (
   return await UserModel.findOne(where, select);
 };
 
+export const getUserById = async (
+  _id: string,
+  select?: ProjectionType<DocumentType<User>>
+) => {
+  return await UserModel.findById(_id, select);
+};
+
 export const signTokens = async (user: DocumentType<User>) => {
   // 1. Create session
   const userSession = { id: user._id, email: user.email };

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   createUserHandler,
   loginUserHandler,
+  refreshAccessTokenHandler,
   verifyEmailHandler,
 } from '../controllers/auth.controller';
 import {
@@ -23,6 +24,8 @@ router
   );
 
 // Login User
-router.post('/login', validateBody(loginUserSchema), loginUserHandler);
+router
+  .post('/login', validateBody(loginUserSchema), loginUserHandler)
+  .post('/refresh', refreshAccessTokenHandler);
 
 export default router;

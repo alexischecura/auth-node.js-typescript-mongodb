@@ -1,4 +1,5 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
 
 import { NotFoundError } from './utils/AppError';
 import globalErrorHandler from './controllers/error.controller';
@@ -7,6 +8,7 @@ import usersRoute from './routes/user.routes';
 const app = express();
 
 app.use(express.json({ limit: '10kb' }));
+app.use(cookieParser());
 
 // Routes
 

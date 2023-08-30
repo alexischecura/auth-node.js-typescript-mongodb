@@ -15,9 +15,12 @@ import { User } from '../model/user.model';
 import {
   createUser,
   getUser,
+  getUserById,
   signTokens,
   updateUser,
 } from '../services/user.service';
+import { redisClient } from '../utils/connectRedisDB';
+import { signJwt, verifyJwt } from '../utils/jwtUtils';
 
 // Signup User
 
@@ -160,5 +163,57 @@ export const loginUserHandler = async (
   } catch (error) {
     console.error(error);
     next(new InternalServerError('Something went wrong when logging in'));
+  }
+};
+
+// Refreshing the token (Create and Send Access Token with)
+export const refreshAccessTokenHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const errorMessage = 'Failed to refresh access token, please login again.';
+
+  try {
+    const refresh_token = req.cookies.refresh_token;
+    if (!refresh_token) return next(new AuthorizationError(errorMessage));
+
+    const decoded = verifyJwt<{ sub: string }>(
+      refresh_token,
+      'REFRESH_TOKEN_PUBLIC_KEY'
+    );
+
+    if (!decoded) return next(new AuthorizationError(errorMessage));
+    const session = await redisClient.get(decoded.sub);
+    if (!session) return next(new AuthorizationError(errorMessage));
+
+    const user = await getUserById(JSON.parse(session).id, {
+      _id: true,
+    });
+    if (!user) return next(new AuthorizationError(errorMessage));
+
+    const access_token = signJwt(
+      { sub: user._id },
+      'ACCESS_TOKEN_PRIVATE_KEY',
+      {
+        expiresIn: `${envVars.ACCESS_TOKEN_EXPIRES}m`,
+      }
+    );
+
+    res.cookie('access_token', access_token, accessTokenCookieOptions);
+    res.cookie('logged_in', true, {
+      ...accessTokenCookieOptions,
+      httpOnly: false,
+    });
+
+    res.status(200).json({
+      status: 'success',
+      access_token,
+    });
+  } catch (error) {
+    console.error(error);
+    next(
+      new InternalServerError('Something went wrong when refreshing the token.')
+    );
   }
 };
