@@ -1,9 +1,14 @@
 import { Router } from 'express';
 import {
   createUserHandler,
+  loginUserHandler,
   verifyEmailHandler,
 } from '../controllers/auth.controller';
-import { createUserSchema, tokenParamsSchema } from '../schemas/user.schema';
+import {
+  createUserSchema,
+  loginUserSchema,
+  tokenParamsSchema,
+} from '../schemas/user.schema';
 import { validateBody, validateParams } from '../utils/schemaValidators';
 
 const router = Router();
@@ -16,5 +21,8 @@ router
     validateParams(tokenParamsSchema),
     verifyEmailHandler
   );
+
+// Login User
+router.post('/login', validateBody(loginUserSchema), loginUserHandler);
 
 export default router;
