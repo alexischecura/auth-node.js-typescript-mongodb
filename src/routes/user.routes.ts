@@ -11,6 +11,8 @@ import {
   tokenParamsSchema,
 } from '../schemas/user.schema';
 import { validateBody, validateParams } from '../utils/schemaValidators';
+import { authenticateUser } from '../middlewares/authenticateUser';
+import { getCurrentUser } from '../controllers/user.controller';
 
 const router = Router();
 
@@ -27,5 +29,8 @@ router
 router
   .post('/login', validateBody(loginUserSchema), loginUserHandler)
   .post('/refresh', refreshAccessTokenHandler);
+
+router.use(authenticateUser);
+router.get('/me', getCurrentUser);
 
 export default router;

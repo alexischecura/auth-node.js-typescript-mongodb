@@ -49,7 +49,7 @@ export const authenticateUser = async (
       return next(new AuthenticationError('Invalid token or session expired.'));
 
     res.locals.user = user;
-    console.log(res.locals.user);
+
     next();
   } catch (error) {
     console.error(error);
