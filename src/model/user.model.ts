@@ -76,6 +76,17 @@ export class User {
     this.verificationCodeExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
     return verifyCode;
   }
+
+  async createPasswordResetCode() {
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    this.passwordResetCode = crypto
+      .createHash('sha256')
+      .update(resetToken)
+      .digest('hex');
+    this.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000);
+    return resetToken;
+  }
 }
 
 const UserModel = getModelForClass(User);
