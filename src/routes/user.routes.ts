@@ -5,12 +5,14 @@ import {
   loginUserHandler,
   logoutUserHandler,
   refreshAccessTokenHandler,
+  resetPasswordHandler,
   verifyEmailHandler,
 } from '../controllers/auth.controller';
 import {
   createUserSchema,
   forgotPasswordSchema,
   loginUserSchema,
+  resetPasswordSchema,
   tokenParamsSchema,
 } from '../schemas/user.schema';
 import { validateBody, validateParams } from '../utils/schemaValidators';
@@ -40,11 +42,18 @@ router
   .post('/refresh', refreshAccessTokenHandler);
 
 // Password Forgot
-router.post(
-  '/forgotPassword',
-  validateBody(forgotPasswordSchema),
-  forgotPasswordHandler
-);
+router
+  .post(
+    '/forgotPassword',
+    validateBody(forgotPasswordSchema),
+    forgotPasswordHandler
+  )
+  .patch(
+    '/resetPassword/:token',
+    validateParams(tokenParamsSchema),
+    validateBody(resetPasswordSchema),
+    resetPasswordHandler
+  );
 
 // Authenticated Routes
 

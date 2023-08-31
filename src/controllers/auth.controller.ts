@@ -312,3 +312,49 @@ export const forgotPasswordHandler = async (
     );
   }
 };
+
+//Reset the password
+export const resetPasswordHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const passwordResetCode = crypto
+      .createHash('sha256')
+      .update(req.params.token)
+      .digest('hex');
+
+    const user = await getUser(
+      {
+        passwordResetCode,
+        passwordResetExpires: { $gt: new Date() },
+      },
+      { _id: true }
+    );
+
+    if (!user)
+      return next(new AuthorizationError('Token is invalid or has expired.'));
+
+    const { password } = req.body;
+
+    user.password = password;
+    user.passwordResetCode = null;
+    user.passwordResetExpires = null;
+    user.save();
+
+    await invalidateSession(res, user.id);
+
+    res.status(202).json({
+      status: 'success',
+      message: 'Your password was successfully updated',
+    });
+  } catch (error) {
+    console.error(error);
+    return next(
+      new InternalServerError(
+        'Something went wrong when handling the reset password.'
+      )
+    );
+  }
+};
