@@ -54,4 +54,11 @@ export default class Email {
       'Your account verification code'
     );
   }
+
+  async sendPasswordResetCode() {
+    await this.send(
+      'resetPasswordEmailTemplate',
+      'Your password reset token (valid for only 10 minutes)'
+    );
+  }
 }
