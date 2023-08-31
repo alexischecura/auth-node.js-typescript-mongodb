@@ -248,3 +248,5 @@ export const logoutUserHandler = async (
     message: 'User successfully logged out',
   });
 };
+
+

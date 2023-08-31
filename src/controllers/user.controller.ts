@@ -23,3 +23,25 @@ export const getCurrentUser = async (
     next(new InternalServerError('Something went wrong when getting the user'));
   }
 };
+
+export const adminTestResponse = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  res.json({
+    status: 'success',
+    message: 'You see this because you are an admin',
+  });
+};
+
+export const userTestResponse = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  res.json({
+    status: 'success',
+    message: 'You see this because you are an user',
+  });
+};

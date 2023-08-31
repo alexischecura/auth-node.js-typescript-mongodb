@@ -13,7 +13,13 @@ import {
 } from '../schemas/user.schema';
 import { validateBody, validateParams } from '../utils/schemaValidators';
 import { authenticateUser } from '../middlewares/authenticateUser';
-import { getCurrentUser } from '../controllers/user.controller';
+import {
+  adminTestResponse,
+  getCurrentUser,
+  userTestResponse,
+} from '../controllers/user.controller';
+import { restrictTo } from '../middlewares/authorizationUser';
+import { UserRole } from '../model/user.model';
 
 const router = Router();
 
@@ -32,10 +38,15 @@ router
   .post('/refresh', refreshAccessTokenHandler);
 
 // Authenticated Routes
+
 router.use(authenticateUser);
 router.get('/me', getCurrentUser);
 
 // Logout user
+
 router.post('/logout', logoutUserHandler);
+
+router.get('/user', restrictTo(UserRole.USER), userTestResponse);
+router.get('/admin', restrictTo(UserRole.ADMIN), adminTestResponse);
 
 export default router;
