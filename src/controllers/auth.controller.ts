@@ -7,6 +7,7 @@ import {
   AuthorizationError,
   ConflictError,
   InternalServerError,
+  NotFoundError,
 } from '../utils/AppError';
 import { envVars } from '../configs/env.config';
 import Email from '../utils/Email';
@@ -249,4 +250,65 @@ export const logoutUserHandler = async (
   });
 };
 
+// Reset Password
 
+// Send reset password link to user email
+export const forgotPasswordHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await getUser(
+      { email: req.body.email.toLowerCase() },
+      { _id: true, email: true, fullName: true, verified: true }
+    );
+
+    if (!user) {
+      return next(
+        new NotFoundError('There is no user with that email address.')
+      );
+    }
+
+    if (!user.verified) {
+      return next(new AuthorizationError('Please verify your email.'));
+    }
+
+    const resetCode = await user.createPasswordResetCode();
+    await user.save();
+
+    try {
+      const resetPasswordUrl = `${envVars.ORIGIN}/api/v1/users/resetPassword/${resetCode}`;
+
+      await new Email(user, resetPasswordUrl).sendPasswordResetCode();
+
+      res.status(200).json({
+        status: 'success',
+        message: 'You will receive an email to reset your password.',
+      });
+    } catch (error) {
+      await updateUser(
+        {
+          _id: user._id,
+        },
+        {
+          passwordResetCode: null,
+          passwordResetExpires: null,
+        }
+      );
+      console.error(error);
+      return next(
+        new InternalServerError(
+          'Something went wrong when sending the email to reset your password.'
+        )
+      );
+    }
+  } catch (error) {
+    console.error(error);
+    return next(
+      new InternalServerError(
+        'Something went wrong when handling the forgot password.'
+      )
+    );
+  }
+};

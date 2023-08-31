@@ -52,3 +52,13 @@ export const loginUserSchema = z.object({
     .min(8, 'Password must be more than 8 characters')
     .max(32, 'Password too long, please provide a shorter password'),
 });
+
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string({
+      required_error: 'Please provide your email',
+      invalid_type_error: 'E-mail must be a string',
+    })
+    .max(255)
+    .email('Invalid email address'),
+});

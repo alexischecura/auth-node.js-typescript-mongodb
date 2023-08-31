@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   createUserHandler,
+  forgotPasswordHandler,
   loginUserHandler,
   logoutUserHandler,
   refreshAccessTokenHandler,
@@ -8,6 +9,7 @@ import {
 } from '../controllers/auth.controller';
 import {
   createUserSchema,
+  forgotPasswordSchema,
   loginUserSchema,
   tokenParamsSchema,
 } from '../schemas/user.schema';
@@ -36,6 +38,13 @@ router
 router
   .post('/login', validateBody(loginUserSchema), loginUserHandler)
   .post('/refresh', refreshAccessTokenHandler);
+
+// Password Forgot
+router.post(
+  '/forgotPassword',
+  validateBody(forgotPasswordSchema),
+  forgotPasswordHandler
+);
 
 // Authenticated Routes
 
