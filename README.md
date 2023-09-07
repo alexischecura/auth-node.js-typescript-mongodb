@@ -55,8 +55,9 @@ Follow these steps to set up the application:
 - Node.js
 - Express
 - Zod
-- TypeORM
-- PostgreSQL
+- Typegoose
+- Mongoose
+- MongoDB
 - Redis
 
 Feel free to explore and contribute.
