@@ -1,4 +1,4 @@
-#Node.js Authentication with MongoDB, Redis, and Typegoose
+# Node.js Authentication with MongoDB, Redis, and Typegoose
 
 Welcome to the the backend auth aplication with Node.Js with TypeScript.
 
