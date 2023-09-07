@@ -1,13 +1,9 @@
-# To run this docker compose use "docker compose up -d"
-# Enviroment variable must be in .env in the same file location
-# If you want to specify a diferent .env file use "docker compose --env-file ./folder/name.env up -d"
-
 version: '3.8'
 services:
   mongo:
     image: mongo:${MONGO_VERSION}
     restart: always
-    container_name: inventory-management-mongodb
+    container_name: auth-management-mongodb
     ports:
       - ${MONGO_PORT}:27017
     volumes:
@@ -19,7 +15,7 @@ services:
 
   redis:
     image: redis:${REDIS_VERSION}
-    container_name: inventory-management-redis
+    container_name: auth-management-redis
     restart: always
     ports:
       - ${REDIS_PORT}:6379

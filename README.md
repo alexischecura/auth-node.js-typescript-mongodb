@@ -1,6 +1,6 @@
 # Node.js Authentication with MongoDB, Redis, and Typegoose
 
-Welcome to the the backend auth aplication with Node.js.
+Welcome to the the backend auth application with Node.js.
 
 ## Getting Started
 
@@ -29,7 +29,7 @@ Follow these steps to set up the application:
      pnpm install
      ```
 
-   - Create a `.env` file in the backend folder and set up the necessary environment variables. You can use the provided `example.env` file as a reference.
+   - Create a `.env` file in the folder and set up the necessary environment variables. You can use the provided `.env.template` file as a reference.
 
    - Set up the Mongo Database and Redis Database using Docker:
 
